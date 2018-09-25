@@ -145,26 +145,34 @@ let Bullet = function(x,y){
     this.y = y;
     this.dx = undefined;
     this.dy = undefined;
-    this.radius = 6;
+    this.radius = 14;
     this.color = "#f00";
     this.speed = 2;
 
     this.draw = function(){
-        ctx.beginPath();
+        //ctx.beginPath();
+        let img = new Image();
+        img.src = "imgs/rocket.png";
+        ctx.save()
+        ctx.translate(this.x+this.radius,this.y+this.radius+2);
+        ctx.rotate((tank.degree+10)*Math.PI/180);
         ctx.shadowOffX = 0;
         ctx.shadowOffY = 0;
         ctx.shadowBlur = 20;
         ctx.shadowColor = this.color;
-        ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.closePath();
+        ctx.translate(-this.radius,-(this.radius+2))
+        ctx.drawImage(img,0,0,this.radius*2,this.radius*2+2);
+        ctx.restore();
+        //ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
+        //ctx.fillStyle = this.color;
+        //ctx.fill();
+        //ctx.closePath();
     }
 
     this.update = function(){
         this.draw();
-        this.dx = this.speed*Math.cos(tank.degree*Math.PI/180);
-        this.dy = this.speed*Math.sin(tank.degree*Math.PI/180);
+        this.dx = this.speed*Math.cos((tank.degree-50)*Math.PI/180);
+        this.dy = this.speed*Math.sin((tank.degree-50)*Math.PI/180);
         this.x+=this.dx;
         this.y+=this.dy;
         this.speed+=0.1;
@@ -227,11 +235,14 @@ function gameOver() {
 
 function fire(){
     if(Skill.status=="q"){
-        loadBullet(TankStatus.posX,TankStatus.posY)        
+        let x = TankStatus.posX+tank.width/2;
+        let y = TankStatus.posY+tank.height/2;
+        loadBullet(x,y)        
         Skill.status="noskill";
     }
     for(let i = 0; i<arrBullet.length; i++){
         arrBullet[i].update();
+
     }
 }
 

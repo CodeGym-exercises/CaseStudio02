@@ -3,7 +3,7 @@ let ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let score = 0;
-let life = 100;
+let life = 10;
 let FPS = 0;
 
 
@@ -178,7 +178,7 @@ let Bullet = function(x,y,degree){
         this.dy = this.speed*Math.sin((this.degree-50)*Math.PI/180);
         this.x+=this.dx;
         this.y+=this.dy;
-        this.speed+=0.2;
+        this.speed+=0.1;
         //console.log("x " + this.x);
         //console.log("y " + this.y);
     }
@@ -192,13 +192,12 @@ let Bullet = function(x,y,degree){
     }
 }
 
-let Explosion = function(x,y,ex){
+let Explosion = function(x,y){
     this.posX = x;
     this.posY = y;
-
     this.draw= function(){
         let img = new Image();
-        img.src = "imgs/explosion"+ex+".png";
+        img.src = "imgs/explosion"+Math.floor(Math.random()*3)+".png";
         ctx.shadowOffX = 1;
         ctx.shadowOffY = 10;
         ctx.shadowBlur = 80;
@@ -250,16 +249,23 @@ let Skill = {
 
 function gameOver() {
     if(life==0){
+        cancelAnimationFrame(id);
         tank.x = x;
         tank.y = y;
-        alert("Game Over, score: " + score);
+        //alert("Game Over, score: " + score);
+        ctx.font = "100px Arial";
+        ctx.fillStyle = "#fff";
+        ctx.fillText("Game Over",canvas.width/2-200,300);
+        ctx.font = "60px Arial";
+        ctx.fillText("Your score " + score,canvas.width/2,350);
+        ctx.font = "30px Arial";
+        ctx.fillText("Press f5 to contiune",canvas.width/2,400);
         let length = arrCircle.length;
         for(let i = 0;i < length; i++){
             arrCircle.pop();
         }
         loadCircle(4);
         score = 0;
-        life = 3;
     }
 }
 
@@ -286,6 +292,7 @@ function collitionOfBulletWidthCircle(){
             if(arrBullet[i].collision(arrCircle[j])){
                 loadExplosion(arrBullet[i].x,arrBullet[i].y)
                 arrCircle.splice(j,1);
+                initCircle();
                 arrBullet.splice(i,1);
                 score++;
                 break;
@@ -295,8 +302,7 @@ function collitionOfBulletWidthCircle(){
 }
 
 function loadExplosion(x,y){
-    let ex = Math.floor(Math.random()*3);
-    arrExplosion.push(new Explosion(x,y,ex));
+    arrExplosion.push(new Explosion(x,y));
 }
 
 function fire(){
@@ -326,6 +332,7 @@ function collitionOfTankWithCircle() {
         let distance = tank.width / 2 + arrCircle[i].radius;
         if (distanceCurrent <= distance) {
             life -= 1;
+            loadExplosion(arrCircle[i].x,arrCircle[i].y)
             arrCircle.splice(i, 1);
             initCircle();
             break;
@@ -375,8 +382,9 @@ function getDistanceOf2Point(x1,y1,x2,y2){
 }
 let count = 10;
 //==========draw============
+let id;
 function animate() {
-    requestAnimationFrame(animate);
+    id = requestAnimationFrame(animate);
     //requestAnimationFrame()
     //console.log("runing");
     ctx.clearRect(0, 0, innerWidth, innerHeight);
@@ -390,7 +398,7 @@ function animate() {
     drawCircle();
     collisionOfCircle();
     collitionOfTankWithCircle();
-    collitionOfBulletWidthCircle()
+    collitionOfBulletWidthCircle();
     drawExplosion();
     clearExplosion();
     gameOver();

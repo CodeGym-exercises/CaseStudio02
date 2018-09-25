@@ -146,7 +146,7 @@ let Bullet = function(x,y){
     this.dx = undefined;
     this.dy = undefined;
     this.radius = 14;
-    this.color = "#f00";
+    this.color = "#fff";
     this.speed = 2;
 
     this.draw = function(){
@@ -156,9 +156,9 @@ let Bullet = function(x,y){
         ctx.save()
         ctx.translate(this.x+this.radius,this.y+this.radius+2);
         ctx.rotate((tank.degree+10)*Math.PI/180);
-        ctx.shadowOffX = 0;
-        ctx.shadowOffY = 0;
-        ctx.shadowBlur = 20;
+        ctx.shadowOffX = 1;
+        ctx.shadowOffY = 10;
+        ctx.shadowBlur = 40;
         ctx.shadowColor = this.color;
         ctx.translate(-this.radius,-(this.radius+2))
         ctx.drawImage(img,0,0,this.radius*2,this.radius*2+2);
@@ -178,6 +178,15 @@ let Bullet = function(x,y){
         this.speed+=0.1;
         //console.log("x " + this.x);
         //console.log("y " + this.y);
+    }
+
+    this.collision = function(object) {
+        let distance = Math.sqrt(Math.pow((this.x - object.x), 2) + Math.pow((this.y - object.y), 2));
+        let sumOfRad = this.radius + object.radius;
+
+        if (distance <= sumOfRad) {
+            return true;
+        }else{return false;}
     }
 }//=======END_CLASS=========
 
@@ -242,7 +251,10 @@ function fire(){
     }
     for(let i = 0; i<arrBullet.length; i++){
         arrBullet[i].update();
-
+        if(arrBullet[i].x<0||arrBullet[i].x>canvas.width||
+            arrBullet[i].y<0||arrBullet[i].y>canvas.height){
+            arrBullet.splice(i,1);
+        }
     }
 }
 
@@ -250,7 +262,19 @@ function loadBullet(x,y){
     arrBullet.push(new Bullet(x,y));
 }
 
-function collitionOfTankwithCircle() {
+function collitionOfBulletWidthCircle(){
+    for(let i = 0; i < arrBullet.length; i++){
+        for(let j = 0; j < arrCircle.length; j++){
+            if(arrBullet[i].collision(arrCircle[j])){
+                arrCircle.splice(j,1);
+                arrBullet.splice(i,1);
+                break;
+            }
+        }
+    }
+}
+
+function collitionOfTankWithCircle() {
     for (let i = 0; i < arrCircle.length; i++) {
         let distanceCurrent = Math.sqrt(Math.pow(((tank.x + tank.width / 2) - arrCircle[i].x), 2) + Math.pow(((tank.y + tank.height / 2) - arrCircle[i].y), 2));
         let distance = tank.width / 2 + arrCircle[i].radius;
@@ -300,7 +324,9 @@ function getRandomColor() {
     return arrColor[Math.floor(Math.random() * arrColor.length)];
 } //=======END FNC=========
 
-
+function getDistanceOf2Point(x1,y1,x2,y2){
+    return Math.sqrt(Math.pow((x1-x2),2)+Math.pow((y1-y2),2));
+}
 let count = 10;
 //==========draw============
 function animate() {
@@ -316,7 +342,8 @@ function animate() {
     fire();
     drawCircle();
     collisionOfCircle();
-    collitionOfTankwithCircle();
+    collitionOfTankWithCircle();
+    collitionOfBulletWidthCircle()
     gameOver();
 }
 animate();

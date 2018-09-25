@@ -3,7 +3,7 @@ let ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let score = 0;
-let life = 3;
+let life = 100;
 
 
 window.addEventListener('keydown', function(event) {
@@ -27,6 +27,10 @@ window.addEventListener('keydown', function(event) {
         case 83:
             TankStatus.status = "stop";
             console.log("83->> stop");
+            break;
+        case 81:
+            Skill.status = "q";
+            console.log("83->> q skill");
             break;
     }
 });
@@ -130,20 +134,44 @@ let Tank = function(x, y, size, spd) {
                 this.x += this.spdx;
             }
         }
+        TankStatus.posX = this.x;
+        TankStatus.posY = this.y;
     }
 } 
 
 //=======Bullet============
-let Bullet = function(){
+let Bullet = function(x,y){
+    this.x = x;
+    this.y = y;
+    this.dx = undefined;
+    this.dy = undefined;
+    this.radius = 6;
+    this.color = "#f00";
+    this.speed = 2;
 
+    this.draw = function(){
+        ctx.beginPath();
+        ctx.shadowOffX = 0;
+        ctx.shadowOffY = 0;
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = this.color;
+        ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+    }
 
+    this.update = function(){
+        this.draw();
+        this.dx = this.speed*Math.cos(tank.degree*Math.PI/180);
+        this.dy = this.speed*Math.sin(tank.degree*Math.PI/180);
+        this.x+=this.dx;
+        this.y+=this.dy;
+        this.speed+=0.1;
+        //console.log("x " + this.x);
+        //console.log("y " + this.y);
+    }
 }//=======END_CLASS=========
-
-
-//=========== object ==========
-let TankStatus = {
-    status: "stop"
-}
 
 //=========init obj========
 //->>init tank
@@ -167,6 +195,18 @@ let arrColor = [
     "#F8A602"
 ];
 loadCircle(4); //input->length
+//-->>init bullet skill
+let arrBullet = [];
+
+//=========== object ==========
+let TankStatus = {
+    status: "stop",
+    posX: undefined,
+    posY: undefined
+}
+let Skill = {
+    status: "noskill"
+}
 
 //=========FNC=========
 
@@ -183,6 +223,20 @@ function gameOver() {
         score = 0;
         life = 3;
     }
+}
+
+function fire(){
+    if(Skill.status=="q"){
+        loadBullet(TankStatus.posX,TankStatus.posY)        
+        Skill.status="noskill";
+    }
+    for(let i = 0; i<arrBullet.length; i++){
+        arrBullet[i].update();
+    }
+}
+
+function loadBullet(x,y){
+    arrBullet.push(new Bullet(x,y));
 }
 
 function collitionOfTankwithCircle() {
@@ -248,6 +302,7 @@ function animate() {
     ctx.fillText("Life: "+ life,10,60);
     tank.draw();
     tank.update();
+    fire();
     drawCircle();
     collisionOfCircle();
     collitionOfTankwithCircle();

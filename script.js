@@ -4,6 +4,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 let score = 0;
 let life = 100;
+let FPS = 0;
 
 
 window.addEventListener('keydown', function(event) {
@@ -136,11 +137,12 @@ let Tank = function(x, y, size, spd) {
         }
         TankStatus.posX = this.x;
         TankStatus.posY = this.y;
+        TankStatus.degree = this.degree;
     }
 } 
 
 //=======Bullet============
-let Bullet = function(x,y){
+let Bullet = function(x,y,degree){
     this.x = x;
     this.y = y;
     this.dx = undefined;
@@ -148,6 +150,7 @@ let Bullet = function(x,y){
     this.radius = 14;
     this.color = "#fff";
     this.speed = 2;
+    this.degree = degree;
 
     this.draw = function(){
         //ctx.beginPath();
@@ -155,7 +158,7 @@ let Bullet = function(x,y){
         img.src = "imgs/rocket.png";
         ctx.save()
         ctx.translate(this.x+this.radius,this.y+this.radius+2);
-        ctx.rotate((tank.degree+10)*Math.PI/180);
+        ctx.rotate((this.degree+22)*Math.PI/180);
         ctx.shadowOffX = 1;
         ctx.shadowOffY = 10;
         ctx.shadowBlur = 40;
@@ -171,11 +174,11 @@ let Bullet = function(x,y){
 
     this.update = function(){
         this.draw();
-        this.dx = this.speed*Math.cos((tank.degree-50)*Math.PI/180);
-        this.dy = this.speed*Math.sin((tank.degree-50)*Math.PI/180);
+        this.dx = this.speed*Math.cos((this.degree-50)*Math.PI/180);
+        this.dy = this.speed*Math.sin((this.degree-50)*Math.PI/180);
         this.x+=this.dx;
         this.y+=this.dy;
-        this.speed+=0.1;
+        this.speed+=0.2;
         //console.log("x " + this.x);
         //console.log("y " + this.y);
     }
@@ -183,11 +186,25 @@ let Bullet = function(x,y){
     this.collision = function(object) {
         let distance = Math.sqrt(Math.pow((this.x - object.x), 2) + Math.pow((this.y - object.y), 2));
         let sumOfRad = this.radius + object.radius;
-
         if (distance <= sumOfRad) {
             return true;
         }else{return false;}
     }
+}
+
+let Explosion = function(x,y,ex){
+    this.posX = x;
+    this.posY = y;
+
+    this.draw= function(){
+        let img = new Image();
+        img.src = "imgs/explosion"+ex+".png";
+        ctx.shadowOffX = 1;
+        ctx.shadowOffY = 10;
+        ctx.shadowBlur = 80;
+        ctx.shadowColor = "#ff0";
+        ctx.drawImage(img,this.posX,this.posY,100,100);
+    };
 }//=======END_CLASS=========
 
 //=========init obj========
@@ -212,19 +229,23 @@ let arrColor = [
     "#F8A602"
 ];
 loadCircle(4); //input->length
+
 //-->>init bullet skill
 let arrBullet = [];
+
+//-->>init Explosion array
+let arrExplosion = [];
 
 //=========== object ==========
 let TankStatus = {
     status: "stop",
+    degree: undefined,
     posX: undefined,
     posY: undefined
 }
 let Skill = {
     status: "noskill"
 }
-
 //=========FNC=========
 
 function gameOver() {
@@ -242,11 +263,48 @@ function gameOver() {
     }
 }
 
+function clearExplosion(){
+    if(arrExplosion.length!=0){
+        if(FPS==100){
+            arrExplosion.pop();
+            FPS = 0;
+        }
+        FPS++;
+        //console.log(FPS);
+    }
+}
+
+function drawExplosion(){
+    for(let i = 0; i < arrExplosion.length; i++){
+        arrExplosion[i].draw();
+    }
+}
+
+function collitionOfBulletWidthCircle(){
+    for(let i = 0; i < arrBullet.length; i++){
+        for(let j = 0; j < arrCircle.length; j++){
+            if(arrBullet[i].collision(arrCircle[j])){
+                loadExplosion(arrBullet[i].x,arrBullet[i].y)
+                arrCircle.splice(j,1);
+                arrBullet.splice(i,1);
+                score++;
+                break;
+            }
+        }
+    }
+}
+
+function loadExplosion(x,y){
+    let ex = Math.floor(Math.random()*3);
+    arrExplosion.push(new Explosion(x,y,ex));
+}
+
 function fire(){
     if(Skill.status=="q"){
         let x = TankStatus.posX+tank.width/2;
         let y = TankStatus.posY+tank.height/2;
-        loadBullet(x,y)        
+        let dg = TankStatus.degree;
+        loadBullet(x,y,dg);        
         Skill.status="noskill";
     }
     for(let i = 0; i<arrBullet.length; i++){
@@ -258,20 +316,8 @@ function fire(){
     }
 }
 
-function loadBullet(x,y){
-    arrBullet.push(new Bullet(x,y));
-}
-
-function collitionOfBulletWidthCircle(){
-    for(let i = 0; i < arrBullet.length; i++){
-        for(let j = 0; j < arrCircle.length; j++){
-            if(arrBullet[i].collision(arrCircle[j])){
-                arrCircle.splice(j,1);
-                arrBullet.splice(i,1);
-                break;
-            }
-        }
-    }
+function loadBullet(x,y,degree){
+    arrBullet.push(new Bullet(x,y,degree));
 }
 
 function collitionOfTankWithCircle() {
@@ -331,6 +377,7 @@ let count = 10;
 //==========draw============
 function animate() {
     requestAnimationFrame(animate);
+    //requestAnimationFrame()
     //console.log("runing");
     ctx.clearRect(0, 0, innerWidth, innerHeight);
     ctx.font = "20px Arial";
@@ -344,6 +391,8 @@ function animate() {
     collisionOfCircle();
     collitionOfTankWithCircle();
     collitionOfBulletWidthCircle()
+    drawExplosion();
+    clearExplosion();
     gameOver();
 }
 animate();

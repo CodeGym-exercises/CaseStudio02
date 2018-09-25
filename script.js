@@ -271,8 +271,8 @@ function gameOver() {
 
 function clearExplosion(){
     if(arrExplosion.length!=0){
-        if(FPS==100){
-            arrExplosion.pop();
+        if(FPS==50){
+            arrExplosion.shift();
             FPS = 0;
         }
         FPS++;

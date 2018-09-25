@@ -392,6 +392,8 @@ function animate() {
     ctx.fillStyle = "#fff";
     ctx.fillText("Score: "+ score,10,30);
     ctx.fillText("Life: "+ life,10,60);
+    ctx.fillText("Q: fire ",120,30);
+    ctx.fillText("S: stop ",200,30);
     tank.draw();
     tank.update();
     fire();

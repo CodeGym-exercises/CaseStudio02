@@ -1,5 +1,5 @@
 //=======CIRCLE=========
-let Circle = function(x, y, dx, dy, rad, color) {
+let Circle = function(x, y, dx, dy, rad, color,imgn) {
     this.x = x;
     this.y = y;
     this.dx = dx;
@@ -9,17 +9,17 @@ let Circle = function(x, y, dx, dy, rad, color) {
 
     this.draw = function() {
         ctx.beginPath();
-        //let img = new Image();
-        //img.src = "imgs/ufo.png";
+        let img = new Image();
+        img.src = "imgs/ufo"+imgn+".png";
         ctx.shadowOffX = 10;
         ctx.shadowOffY = 10;
         ctx.shadowBlur = 20;
         ctx.shadowColor = this.color;
-        //ctx.drawImage(img, this.x, this.y,this.radius,this.radius);
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.closePath();
+        ctx.drawImage(img, this.x, this.y,this.radius+20,this.radius+20);
+        //ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        ///ctx.fillStyle = this.color;
+        //ctx.fill();
+        //ctx.closePath();
         this.update();
     }
     this.update = function() {

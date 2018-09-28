@@ -115,7 +115,8 @@ function initCircle() {
     y = Math.random() * (canvas.height - radius * 2) + radius;
     randomdx *= temp[Math.floor(Math.random() * 2)];
     randomdy *= temp[Math.floor(Math.random() * 2)];
-    arrCircle.push(new Circle(x, y, randomdx, randomdy, radius, getRandomColor()));
+    let rdImg = Math.floor(Math.random()*5);
+    arrCircle.push(new Circle(x, y, randomdx, randomdy, radius, getRandomColor(),rdImg));
 }
 
 function getRandomColor() {

@@ -36,133 +36,8 @@ window.addEventListener('keydown', function(event) {
     }
 });
 
-//=================== CLASS ========================
-
-
-
-//=======TANK=========
-let Tank = function(x, y, size, spd) {
-    this.x = x;
-    this.y = y;
-    this.spdx = spd;
-    this.spdy = spd;
-    this.width = size;
-    this.height = size;
-    this.degree = 0;
-    this.draw = function() {
-        //ctx.rotate(Math.PI/10);
-        let img = new Image(100, 100);
-        img.src = "imgs/spaceship.png";
-        //ctx.rotate(-45*Math.PI/180);
-        ctx.save();
-        ctx.translate(this.x + (this.width / 2), this.y + (this.height / 2));
-        ctx.rotate(this.degree * Math.PI / 180);
-        this.degree += 1;
-        if (this.degree == 360) {
-            this.degree = 0;
-        }
-        ctx.shadowOffX = 10;
-        ctx.shadowOffY = 10;
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = "#fff";
-        ctx.translate(-this.width / 2, -this.height / 2);
-        ctx.drawImage(img, 0, 0, this.width, this.height);
-        ctx.restore();
-        //ctx.resetTransform();
-    };
-
-    this.update = function() {
-        if (TankStatus.status == "movetop") {
-            if (this.y > 0) {
-                this.y -= this.spdy;
-            }
-            //console.log(this.nextStepY);            
-        } else if (TankStatus.status == "movedown") {
-            if (this.y < canvas.height - this.height) {
-                this.y += this.spdy;
-            }
-        } else if (TankStatus.status == "moveleft") {
-            if (this.x > 0) {
-                this.x -= this.spdx;
-            }
-
-        } else if (TankStatus.status == "moveright") {
-            if (this.x < canvas.width - this.width) {
-                this.x += this.spdx;
-            }
-        }
-        TankStatus.posX = this.x;
-        TankStatus.posY = this.y;
-        TankStatus.degree = this.degree;
-    }
-} 
-
-//=======Bullet============
-let Bullet = function(x,y,degree){
-    this.x = x;
-    this.y = y;
-    this.dx = undefined;
-    this.dy = undefined;
-    this.radius = 14;
-    this.color = "#fff";
-    this.speed = 2;
-    this.degree = degree;
-
-    this.draw = function(){
-        //ctx.beginPath();
-        let img = new Image();
-        img.src = "imgs/rocket.png";
-        ctx.save()
-        ctx.translate(this.x+this.radius,this.y+this.radius+2);
-        ctx.rotate((this.degree+22)*Math.PI/180);
-        ctx.shadowOffX = 1;
-        ctx.shadowOffY = 10;
-        ctx.shadowBlur = 40;
-        ctx.shadowColor = this.color;
-        ctx.translate(-this.radius,-(this.radius+2))
-        ctx.drawImage(img,0,0,this.radius*2,this.radius*2+2);
-        ctx.restore();
-        //ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
-        //ctx.fillStyle = this.color;
-        //ctx.fill();
-        //ctx.closePath();
-    }
-
-    this.update = function(){
-        this.draw();
-        this.dx = this.speed*Math.cos((this.degree-50)*Math.PI/180);
-        this.dy = this.speed*Math.sin((this.degree-50)*Math.PI/180);
-        this.x+=this.dx;
-        this.y+=this.dy;
-        this.speed+=0.2;
-        //console.log("x " + this.x);
-        //console.log("y " + this.y);
-    }
-
-    this.collision = function(object) {
-        let distance = Math.sqrt(Math.pow((this.x - object.x), 2) + Math.pow((this.y - object.y), 2));
-        let sumOfRad = this.radius + object.radius;
-        if (distance <= sumOfRad) {
-            return true;
-        }else{return false;}
-    }
-}
-
-let Explosion = function(x,y){
-    this.posX = x;
-    this.posY = y;
-    this.draw= function(){
-        let img = new Image();
-        img.src = "imgs/explosion"+Math.floor(Math.random()*3)+".png";
-        ctx.shadowOffX = 1;
-        ctx.shadowOffY = 10;
-        ctx.shadowBlur = 80;
-        ctx.shadowColor = "#ff0";
-        ctx.drawImage(img,this.posX,this.posY,100,100);
-    };
-}//=======END_CLASS=========
-
 //=========init obj========
+
 //->>init tank
 let x = 200,
     y = 200,
@@ -201,7 +76,6 @@ let TankStatus = {
 let Skill = {
     status: "noskill"
 }
-//=========FNC=========
 
 
 let count = 10;

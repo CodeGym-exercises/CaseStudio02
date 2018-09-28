@@ -6,6 +6,16 @@ let score = 0;
 let life = 10;
 let FPS = 0;
 
+//=========== object ==========
+let TankStatus = {
+    status: "stop",
+    degree: undefined,
+    posX: undefined,
+    posY: undefined
+}
+let Skill = {
+    status: "noskill"
+}
 
 window.addEventListener('keydown', function(event) {
     switch (event.keyCode) {
@@ -31,7 +41,11 @@ window.addEventListener('keydown', function(event) {
             break;
         case 81:
             Skill.status = "q";
-            console.log("83->> q skill");
+            console.log("81->> q skill");
+            break;
+        case 87:
+            Skill.status = "w";
+            console.log("87->> w skill");
             break;
     }
 });
@@ -43,7 +57,7 @@ let x = 200,
     y = 200,
     size = 60,
     spd = 5;
-let tank = new Tank(x, y, size, spd);
+let ship = new Tank(x, y, size, spd);
 
 //->>init circle
 let arrCircle = [];
@@ -66,17 +80,6 @@ let arrBullet = [];
 //-->>init Explosion array
 let arrExplosion = [];
 
-//=========== object ==========
-let TankStatus = {
-    status: "stop",
-    degree: undefined,
-    posX: undefined,
-    posY: undefined
-}
-let Skill = {
-    status: "noskill"
-}
-
 
 let count = 10;
 //==========draw============
@@ -92,8 +95,8 @@ function animate() {
     ctx.fillText("Life: "+ life,10,60);
     ctx.fillText("Q: fire ",120,30);
     ctx.fillText("S: stop ",200,30);
-    tank.draw();
-    tank.update();
+    ship.draw();
+    ship.update();
     fire();
     drawCircle();
     collisionOfCircle();

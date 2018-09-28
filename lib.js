@@ -1,8 +1,8 @@
 function gameOver() {
     if(life==0){
         cancelAnimationFrame(id);
-        tank.x = x;
-        tank.y = y;
+        ship.x = x;
+        ship.y = y;
         //alert("Game Over, score: " + score);
         ctx.font = "100px Arial";
         ctx.fillStyle = "#fff";
@@ -52,10 +52,16 @@ function collitionOfBulletWidthCircle(){
 
 function fire(){
     if(Skill.status=="q"){
-        let x = TankStatus.posX+tank.width/2;
-        let y = TankStatus.posY+tank.height/2;
+        let x = TankStatus.posX+ship.width/2;
+        let y = TankStatus.posY+ship.height/2;
         let dg = TankStatus.degree;
-        loadBullet(x,y,dg);        
+        loadBullet(x,y,dg,"rocket",14,2);        
+        Skill.status="noskill";
+    }else if(Skill.status=="w"){
+        let x = TankStatus.posX+ship.width/2;
+        let y = TankStatus.posY+ship.height/2;
+        let dg = TankStatus.degree;
+        loadBullet(x,y,dg,"intelligentrocket01",20,0);        
         Skill.status="noskill";
     }
     for(let i = 0; i<arrBullet.length; i++){
@@ -67,14 +73,14 @@ function fire(){
     }
 }
 
-function loadBullet(x,y,degree){
-    arrBullet.push(new Bullet(x,y,degree));
+function loadBullet(x,y,degree,type,radius,ratio){
+    arrBullet.push(new Bullet(x,y,degree,type,radius,ratio));
 }
 
 function collitionOfTankWithCircle() {
     for (let i = 0; i < arrCircle.length; i++) {
-        let distanceCurrent = Math.sqrt(Math.pow(((tank.x + tank.width / 2) - arrCircle[i].x), 2) + Math.pow(((tank.y + tank.height / 2) - arrCircle[i].y), 2));
-        let distance = tank.width / 2 + arrCircle[i].radius;
+        let distanceCurrent = Math.sqrt(Math.pow(((ship.x + ship.width / 2) - arrCircle[i].x), 2) + Math.pow(((ship.y + ship.height / 2) - arrCircle[i].y), 2));
+        let distance = ship.width / 2 + arrCircle[i].radius;
         if (distanceCurrent <= distance) {
             life -= 1;
             loadExplosion(arrCircle[i].x,arrCircle[i].y)

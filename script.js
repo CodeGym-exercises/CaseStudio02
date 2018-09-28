@@ -49,10 +49,13 @@ let Circle = function(x, y, dx, dy, rad, color) {
 
     this.draw = function() {
         ctx.beginPath();
+        //let img = new Image();
+        //img.src = "imgs/ufo.png";
         ctx.shadowOffX = 10;
         ctx.shadowOffY = 10;
         ctx.shadowBlur = 20;
         ctx.shadowColor = this.color;
+        //ctx.drawImage(img, this.x, this.y,this.radius,this.radius);
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         ctx.fillStyle = this.color;
         ctx.fill();
@@ -178,7 +181,7 @@ let Bullet = function(x,y,degree){
         this.dy = this.speed*Math.sin((this.degree-50)*Math.PI/180);
         this.x+=this.dx;
         this.y+=this.dy;
-        this.speed+=0.1;
+        this.speed+=0.2;
         //console.log("x " + this.x);
         //console.log("y " + this.y);
     }
@@ -259,13 +262,7 @@ function gameOver() {
         ctx.font = "60px Arial";
         ctx.fillText("Your score " + score,canvas.width/2,350);
         ctx.font = "30px Arial";
-        ctx.fillText("Press f5 to contiune",canvas.width/2,400);
-        let length = arrCircle.length;
-        for(let i = 0;i < length; i++){
-            arrCircle.pop();
-        }
-        loadCircle(4);
-        score = 0;
+        ctx.fillText("Press f5 to contiune",canvas.width/2,400);        
     }
 }
 
@@ -286,6 +283,10 @@ function drawExplosion(){
     }
 }
 
+function loadExplosion(x,y){
+    arrExplosion.push(new Explosion(x,y));
+}
+
 function collitionOfBulletWidthCircle(){
     for(let i = 0; i < arrBullet.length; i++){
         for(let j = 0; j < arrCircle.length; j++){
@@ -299,10 +300,6 @@ function collitionOfBulletWidthCircle(){
             }
         }
     }
-}
-
-function loadExplosion(x,y){
-    arrExplosion.push(new Explosion(x,y));
 }
 
 function fire(){

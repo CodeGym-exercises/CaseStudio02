@@ -77,6 +77,7 @@ loadCircle(4); //input->length
 //-->>init bullet skill
 let arrBullet = [];
 
+
 //-->>init Explosion array
 let arrExplosion = [];
 
@@ -92,9 +93,10 @@ function animate() {
     ctx.font = "20px Arial";
     ctx.fillStyle = "#fff";
     ctx.fillText("Score: "+ score,10,30);
-    ctx.fillText("Life: "+ life,10,60);
-    ctx.fillText("Q: fire ",120,30);
-    ctx.fillText("S: stop ",200,30);
+    ctx.fillText("Life: "+ life,10,60);    
+    ctx.fillText("S: stop ",120,30);
+    ctx.fillText("Q: rocket 1.0 ",200,30);
+    ctx.fillText("W: rocket 2.0 ",340,30);
     ship.draw();
     ship.update();
     fire();
@@ -104,6 +106,7 @@ function animate() {
     collitionOfBulletWidthCircle();
     drawExplosion();
     clearExplosion();
+    //getTarget();
     gameOver();
 }
 animate();

@@ -61,7 +61,9 @@ function fire(){
         let x = TankStatus.posX+ship.width/2;
         let y = TankStatus.posY+ship.height/2;
         let dg = TankStatus.degree;
-        loadBullet(x,y,dg,"intelligentrocket01",20,0);        
+        let randomTarget = Math.floor(Math.random()*arrCircle.length);
+        loadBullet(x,y,dg,"intelligentrocket01",20,0);     
+        arrBullet[arrBullet.length-1].setTarget(arrCircle[randomTarget])  
         Skill.status="noskill";
     }
     for(let i = 0; i<arrBullet.length; i++){
@@ -127,8 +129,19 @@ function initCircle() {
 
 function getRandomColor() {
     return arrColor[Math.floor(Math.random() * arrColor.length)];
-} //=======END FNC=========
+} 
 
-function getDistanceOf2Point(x1,y1,x2,y2){
+function getDistance(x1,x2,y1,y2){
     return Math.sqrt(Math.pow((x1-x2),2)+Math.pow((y1-y2),2));
+}
+
+function findMin(arr){
+    let min = arr[0], index=0;
+    for(let i = 1; i<arr.length; i++){
+        if(min>arr[i]){
+            min=arr[i];
+            index=i;
+        }
+    }
+    return [min,index];
 }
